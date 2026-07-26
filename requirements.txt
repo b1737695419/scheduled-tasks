@@ -1,5 +1,5 @@
 pandas
-stmplib
+smtplib
 os
 datetime
 random
