@@ -1,10 +1,11 @@
-name: Test Setup
+name: Run Weather Scanner
 
 on:
-  workflow_dispatch:  # Manual trigger only
+  workflow_dispatch:  # 點擊網頁按鈕手動觸發
+
 
 jobs:
-  test:
+  run-task:
     runs-on: ubuntu-latest
 
     steps:
@@ -19,67 +20,13 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install requests twilio
 
-      - name: Check secrets are configured
+      - name: Run Python script
+        # 👇 關鍵在這裡：將您在網頁設定的密鑰，對應成 Python 程式看的到的環境變數
         env:
-          MY_EMAIL: ${{ secrets.MY_EMAIL }}
-          MY_PASSWORD: ${{ secrets.MY_PASSWORD }}
-        run: |
-          if [ -z "$MY_EMAIL" ]; then
-            echo "MY_EMAIL secret is not set!"
-            echo "Go to Settings > Secrets > Actions and add it."
-            exit 1
-          else
-            echo "MY_EMAIL is configured"
-          fi
+          API_KEY: ${{ secrets.API_KEY }}
+          ACCOUNT_SID: ${{ secrets.ACCOUNT_SID }}
+          AUTH_TOKEN: ${{ secrets.AUTH_TOKEN }}
+        run: python main.py
 
-          if [ -z "$MY_PASSWORD" ]; then
-            echo "MY_PASSWORD secret is not set!"
-            echo "Go to Settings > Secrets > Actions and add it."
-            exit 1
-          else
-            echo "MY_PASSWORD is configured"
-          fi
-
-          echo ""
-          echo "All secrets are configured!"
-
-      - name: Check required files exist
-        run: |
-          echo "Checking for required files..."
-
-          if [ -f "main.py" ]; then
-            echo "main.py found"
-          else
-            echo "main.py not found!"
-            exit 1
-          fi
-
-          if [ -f "requirements.txt" ]; then
-            echo "requirements.txt found"
-          else
-            echo "requirements.txt not found!"
-            exit 1
-          fi
-
-          if [ -f "birthdays.csv" ]; then
-            echo "birthdays.csv found"
-          else
-            echo "birthdays.csv not found!"
-            exit 1
-          fi
-
-          echo ""
-          echo "All required files found!"
-
-      - name: Test Python syntax
-        run: python -m py_compile main.py && echo "Python syntax OK"
-
-      - name: Success
-        run: |
-          echo ""
-          echo "========================================"
-          echo "  All checks passed!"
-          echo "  Your setup is ready to go."
-          echo "========================================"
