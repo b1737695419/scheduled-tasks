@@ -29,6 +29,7 @@ jobs:
           ACCOUNT_SID: ${{ secrets.ACCOUNT_SID }}
           AUTH_TOKEN: ${{ secrets.AUTH_TOKEN }}
         run: |
+          python main.py
           if [ -z "$MY_EMAIL" ]; then
             echo "MY_EMAIL secret is not set!"
             echo "Go to Settings > Secrets > Actions and add it."
